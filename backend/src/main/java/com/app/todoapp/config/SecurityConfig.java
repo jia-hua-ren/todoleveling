@@ -13,8 +13,16 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
-                .oauth2Login(Customizer.withDefaults());
+        http.authorizeHttpRequests(auth -> auth
+                .requestMatchers("/", "/public/**", "/auth/**", "/oauth2/**", "/login/**").permitAll()
+                .anyRequest().authenticated())
+                .oauth2Login(oauth -> oauth
+                        // force redirect to frontend after login
+                        .defaultSuccessUrl("http://localhost:3000/dashboard", true)
+                        .failureUrl("/auth/login?error"))
+                .logout(logout -> logout
+                        .logoutSuccessUrl("http://localhost:3000")
+                        .permitAll());
 
         return http.build();
     }
