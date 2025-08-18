@@ -13,7 +13,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch("http://localhost:8080/user", {
+        const res = await fetch("http://localhost:8080/user/me", {
           credentials: "include",
         });
 
@@ -41,14 +41,10 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <h1>Welcome, {user.principal.attributes.given_name} 👋</h1>
-      <Image
-        src={user.principal.attributes.picture}
-        alt={user.principal.attributes.name}
-        width={64}
-        height={64}
-      />
-      <p>Email: {user.principal.attributes.email}</p>
+      <h1>Welcome, {user.name} 👋</h1>
+      <Image src={user.picture} alt={user.name} width={64} height={64} />
+      <p>Email: {user.email}</p>
+      <p>Google sub: {user.id}</p>
     </div>
   );
 }
