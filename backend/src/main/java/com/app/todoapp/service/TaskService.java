@@ -20,9 +20,10 @@ public class TaskService {
         return taskRepository.findAll();
     }
 
-    public Task createTask(String title) {
+    public Task createTask(String title, String ownerId) {
         Task task = new Task();
         task.setTitle(title);
+        // task.setOwnerId(ownerId);
         task.setCompleted(false);
         return taskRepository.save(task);
     }

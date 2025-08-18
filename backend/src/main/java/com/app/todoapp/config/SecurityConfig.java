@@ -2,7 +2,6 @@ package com.app.todoapp.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -11,19 +10,31 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 
 public class SecurityConfig {
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/public/**", "/auth/**", "/oauth2/**", "/login/**").permitAll()
-                .anyRequest().authenticated())
-                .oauth2Login(oauth -> oauth
-                        // force redirect to frontend after login
-                        .defaultSuccessUrl("http://localhost:3000/dashboard", true)
-                        .failureUrl("/auth/login?error"))
-                .logout(logout -> logout
-                        .logoutSuccessUrl("http://localhost:3000")
-                        .permitAll());
 
-        return http.build();
-    }
+        private final CustomOidcUserService customOidcUserService;
+
+        public SecurityConfig(CustomOidcUserService customOidcUserService) {
+                this.customOidcUserService = customOidcUserService;
+        }
+
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http)
+                        throws Exception {
+                http.authorizeHttpRequests(auth -> auth
+                                .requestMatchers("/", "/public/**", "/auth/**", "/oauth2/**", "/login/**").permitAll()
+                                .anyRequest().authenticated())
+                                .oauth2Login(oauth -> oauth
+                                                .userInfoEndpoint(userInfo -> userInfo
+                                                                .oidcUserService(customOidcUserService) // custom user
+                                                                                                        // service
+                                                )
+                                                // force redirect to frontend after login
+                                                .defaultSuccessUrl("http://localhost:3000/dashboard", true)
+                                                .failureUrl("/auth/login?error"))
+                                .logout(logout -> logout
+                                                .logoutSuccessUrl("http://localhost:3000")
+                                                .permitAll());
+
+                return http.build();
+        }
 }

@@ -23,8 +23,8 @@ public class AuthController {
                 .build();
     }
 
-    @GetMapping("/user")
-    public Principal user(Principal user) {
-        return user;
-    }
+    // @GetMapping("/user")
+    // public Principal user(Principal user) {
+    // return user;
+    // }
 }
