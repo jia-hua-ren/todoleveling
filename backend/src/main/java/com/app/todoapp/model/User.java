@@ -1,5 +1,6 @@
 package com.app.todoapp.model;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,6 +17,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+
 public class User {
     @Id
     private String id; // Google sub
@@ -22,6 +26,15 @@ public class User {
     private String name;
     private String email;
     private String picture;
+
+    @Builder.Default
+    private Instant createdAt = Instant.now();
+
+    @Builder.Default
+    private int level = 0;
+
+    @Builder.Default
+    private int exp = 0;
 
     // Optional: see all tasks owned by this user
     // @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval =

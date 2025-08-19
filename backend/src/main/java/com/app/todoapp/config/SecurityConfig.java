@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.config.Customizer;
 
 @Configuration
 @EnableWebSecurity
@@ -20,9 +21,14 @@ public class SecurityConfig {
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http)
                         throws Exception {
-                http.authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/", "/public/**", "/auth/**", "/oauth2/**", "/login/**").permitAll()
-                                .anyRequest().authenticated())
+                http
+                                .cors(Customizer.withDefaults())
+                                .csrf(csrf -> csrf.disable())
+                                .authorizeHttpRequests(auth -> auth
+                                                .requestMatchers("/", "/public/**", "/auth/**", "/oauth2/**",
+                                                                "/login/**")
+                                                .permitAll()
+                                                .anyRequest().authenticated())
                                 .oauth2Login(oauth -> oauth
                                                 .userInfoEndpoint(userInfo -> userInfo
                                                                 .oidcUserService(customOidcUserService) // custom user
@@ -31,6 +37,12 @@ public class SecurityConfig {
                                                 // force redirect to frontend after login
                                                 .defaultSuccessUrl("http://localhost:3000/dashboard", true)
                                                 .failureUrl("/auth/login?error"))
+                                .exceptionHandling(customizer -> {
+                                        customizer.authenticationEntryPoint(
+                                                        (request, response, authException) -> {
+                                                                response.sendError(401, "Unauthorized");
+                                                        });
+                                })
                                 .logout(logout -> logout
                                                 .logoutSuccessUrl("http://localhost:3000")
                                                 .permitAll());

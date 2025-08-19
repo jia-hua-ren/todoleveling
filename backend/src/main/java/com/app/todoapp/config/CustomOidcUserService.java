@@ -5,7 +5,6 @@ import com.app.todoapp.repository.UserRepository;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,11 +23,12 @@ public class CustomOidcUserService extends OidcUserService {
 
         // Create user if not exists
         userRepository.findById(sub).orElseGet(() -> {
-            User newUser = new User(
-                    sub,
-                    oidcUser.getFullName(),
-                    oidcUser.getEmail(),
-                    oidcUser.getPicture());
+            User newUser = User.builder()
+                    .id(sub)
+                    .name(oidcUser.getFullName())
+                    .email(oidcUser.getEmail())
+                    .picture(oidcUser.getPicture())
+                    .build();
             return userRepository.save(newUser);
         });
 

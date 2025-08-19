@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import type { User } from "@/app/types";
+import Link from "next/link";
 
 export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
@@ -41,6 +42,7 @@ export default function DashboardPage() {
 
   return (
     <div>
+      <Link href="/"> Home Page</Link>
       <h1>Welcome, {user.name} 👋</h1>
       <Image src={user.picture} alt={user.name} width={64} height={64} />
       <p>Email: {user.email}</p>
