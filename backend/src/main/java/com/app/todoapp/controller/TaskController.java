@@ -26,45 +26,41 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    @GetMapping
-    public Iterable<Task> getTasks(Authentication auth) {
-        // Object principal = auth.getPrincipal();
-
-        // if (principal instanceof OAuth2User oAuth2User) {
-        // String sub = oAuth2User.getAttribute("sub");
-        // if (sub != null)
-        // ownerId = sub; // stable Google user id
-        // ownerEmail = oAuth2User.getAttribute("email");
-        // }
-        Iterable<Task> tasks = taskService.getAllTasks();
-        return tasks;
-    }
-
-    @PostMapping
-    public ResponseEntity<Task> createTask(@RequestParam String title, Authentication auth) {
+    private String getOwnerId(Authentication auth) {
         String ownerId = auth.getName();
-        String ownerEmail = null;
 
         Object principal = auth.getPrincipal();
         if (principal instanceof OAuth2User oAuth2User) {
             String sub = oAuth2User.getAttribute("sub");
-            if (sub != null)
+            if (sub != null) {
                 ownerId = sub; // stable Google user id
+            }
         }
+        return ownerId;
+    }
 
+    @GetMapping
+    public Iterable<Task> getTasks(Authentication auth) {
+        String ownerId = getOwnerId(auth);
+        return taskService.getTasksByOwner(ownerId);
+    }
+
+    @PostMapping
+    public ResponseEntity<Task> createTask(@RequestParam String title, Authentication auth) {
+        String ownerId = getOwnerId(auth);
         Task saved = taskService.createTask(title, ownerId);
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{id}/delete")
-    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
-        taskService.deleteTask(id);
-        return ResponseEntity.ok().build();
-    }
+    // @DeleteMapping("/{id}/delete")
+    // public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
+    // taskService.deleteTask(id);
+    // return ResponseEntity.ok().build();
+    // }
 
-    @PatchMapping("/{id}/toggle")
-    public ResponseEntity<Void> toggleTask(@PathVariable Long id) {
-        taskService.toggleTask(id);
-        return ResponseEntity.ok().build();
-    }
+    // @PatchMapping("/{id}/toggle")
+    // public ResponseEntity<Void> toggleTask(@PathVariable Long id) {
+    // taskService.toggleTask(id);
+    // return ResponseEntity.ok().build();
+    // }
 }

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import type { User } from "@/app/types";
 import Link from "next/link";
+import Tasks from "@/components/Tasks";
 
 export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
@@ -47,6 +48,8 @@ export default function DashboardPage() {
       <Image src={user.picture} alt={user.name} width={64} height={64} />
       <p>Email: {user.email}</p>
       <p>Google sub: {user.id}</p>
+
+      <Tasks />
     </div>
   );
 }

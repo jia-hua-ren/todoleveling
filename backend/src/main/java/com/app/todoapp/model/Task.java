@@ -1,5 +1,7 @@
 package com.app.todoapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -23,8 +25,10 @@ public class Task {
     private String title;
     private boolean completed;
 
-    // @ManyToOne(fetch = FetchType.LAZY)
-    // @JoinColumn(name = "user_id", nullable = false) // FK column in DB
-    // private User owner;
+    // TODO: use DTO
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false) // FK column in DB
+    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+    private User owner;
 
 }
