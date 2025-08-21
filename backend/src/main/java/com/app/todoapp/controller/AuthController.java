@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class AuthController {
-
-    // GET /auth/login -> 302 redirect to Spring Security's Google entry point
     @GetMapping("/auth/login")
     public ResponseEntity<Void> login() {
         return ResponseEntity.status(HttpStatus.FOUND)

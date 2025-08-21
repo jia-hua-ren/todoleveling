@@ -1,42 +1,11 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
-import type { User } from "@/app/types";
 import Link from "next/link";
 import Tasks from "@/components/Tasks";
+import { verifySession } from "@/dal/dal";
 
-export default function DashboardPage() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
+export default async function DashboardPage() {
+  const user = await verifySession();
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await fetch("http://localhost:8080/user/me", {
-          credentials: "include",
-        });
-
-        if (res.status === 401) {
-          router.push("/");
-          return;
-        }
-
-        const data: User = await res.json();
-        setUser(data);
-      } catch (err) {
-        console.error("Failed to fetch user:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, [router]);
-
-  if (loading) return <p>Loading...</p>;
   if (!user) return <p>Not logged in.</p>;
 
   console.log("User data:", user);

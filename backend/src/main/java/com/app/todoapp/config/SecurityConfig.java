@@ -45,6 +45,8 @@ public class SecurityConfig {
                                 })
                                 .logout(logout -> logout
                                                 .logoutSuccessUrl("http://localhost:3000")
+                                                .deleteCookies("JSESSIONID")
+                                                .invalidateHttpSession(true)
                                                 .permitAll());
 
                 return http.build();
