@@ -6,15 +6,29 @@ export default async function GoogleLogIn() {
 
   if (user) {
     return (
-      <div>
-        <Link href="/dashboard">Dashboard</Link>
-        <Link href="http://localhost:8080/logout">Logout</Link>
-      </div>
+      <>
+        <li>
+          <a href="/dashboard" className="navbarItem">
+            Dashboard
+          </a>
+        </li>
+        <li>
+          <a href="http://localhost:8080/logout" className="navbarItem">
+            Logout
+          </a>
+        </li>
+      </>
     );
   }
 
   const backendBase = process.env.NEXT_PUBLIC_BACKEND_BASE_URL ?? "";
   const loginUrl = `${backendBase.replace(/\/+$/, "")}/auth/login`;
 
-  return <Link href={loginUrl}>Login</Link>;
+  return (
+    <li>
+      <a href={loginUrl} className="navbarItem">
+        Login
+      </a>
+    </li>
+  );
 }
