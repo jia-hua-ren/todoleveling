@@ -1,12 +1,25 @@
 "use client";
 
 import { useState, useEffect } from "react";
-
-type Task = {
-  id: number;
-  title: string;
-  completed: boolean;
-};
+import TaskItem from "@/components/TaskItem";
+import { Task } from "../app/types";
+import { getTasks, createTask } from "@/services/taskService";
+import {
+  closestCorners,
+  DndContext,
+  DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 
 export default function Tasks() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -15,14 +28,8 @@ export default function Tasks() {
 
   // Fetch tasks on mount
   useEffect(() => {
-    fetch("http://localhost:8080/api/tasks", {
-      credentials: "include", // send cookies
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch tasks");
-        return res.json();
-      })
-      .then((data) => setTasks(data))
+    getTasks()
+      .then(setTasks)
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));
   }, []);
@@ -33,16 +40,7 @@ export default function Tasks() {
     if (!newTask.trim()) return;
 
     try {
-      const res = await fetch(
-        `http://localhost:8080/api/tasks?title=${encodeURIComponent(newTask)}`,
-        {
-          method: "POST",
-          credentials: "include",
-        }
-      );
-      if (!res.ok) throw new Error("Failed to create task");
-
-      const task: Task = await res.json();
+      const task = await createTask(newTask);
       setTasks((prev) => [...prev, task]);
       setNewTask("");
     } catch (err) {
@@ -50,13 +48,35 @@ export default function Tasks() {
     }
   };
 
+  const getTaskPos = (id: number) => tasks.findIndex((task) => task.id === id);
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) return;
+
+    setTasks((tasks) => {
+      const oldIndex = getTaskPos(Number(active.id));
+      const newIndex = getTaskPos(Number(over.id));
+      if (oldIndex === -1 || newIndex === -1) return tasks;
+      return arrayMove(tasks, oldIndex, newIndex);
+    });
+  };
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(TouchSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
   if (loading) return <p>Loading...</p>;
 
   return (
     <div className="max-w-xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">My Tasks</h1>
 
-      {/* Create new task */}
       <form onSubmit={handleCreateTask} className="flex gap-2 mb-6">
         <input
           type="text"
@@ -73,20 +93,22 @@ export default function Tasks() {
         </button>
       </form>
 
-      {/* Task cards */}
-      <div className="grid gap-3">
-        {tasks.map((task) => (
-          <div
-            key={task.id}
-            className="p-3 border rounded shadow-sm flex justify-between items-center"
-          >
-            <span>{task.title}</span>
-            <span className="text-sm text-gray-500">
-              {task.completed ? "✅ Done" : "⌛ Pending"}
-            </span>
-          </div>
-        ))}
-      </div>
+      <DndContext
+        collisionDetection={closestCorners}
+        onDragEnd={handleDragEnd}
+        sensors={sensors}
+      >
+        <SortableContext items={tasks} strategy={verticalListSortingStrategy}>
+          {tasks.map((task) => (
+            <TaskItem
+              key={task.id}
+              task={task}
+              onEdit={(t) => console.log("Edit", t)}
+              onDelete={(t) => console.log("Delete", t)}
+            />
+          ))}
+        </SortableContext>
+      </DndContext>
     </div>
   );
 }
