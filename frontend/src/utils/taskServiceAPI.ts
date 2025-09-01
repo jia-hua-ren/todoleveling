@@ -16,3 +16,11 @@ export async function createTask(title: string): Promise<Task> {
   if (!res.ok) throw new Error("Failed to create task");
   return res.json();
 }
+
+export async function deleteTask(id: number): Promise<void> {
+  const res = await fetch(`${API_URL}/${id}/delete`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+  if (!res.ok) throw new Error("Failed to delete task");
+}

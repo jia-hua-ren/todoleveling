@@ -1,5 +1,7 @@
 package com.app.todoapp.service;
 
+import java.util.Optional;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -25,6 +27,10 @@ public class TaskService {
         return taskRepository.findByOwnerId(ownerId);
     }
 
+    public Optional<Task> getTaskById(Long id) {
+        return taskRepository.findById(id);
+    }
+
     public Task createTask(String title, String ownerId) {
         User owner = userRepository.findById(ownerId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -35,9 +41,9 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
-    // public void deleteTask(Long id) {
-    // taskRepository.deleteById(id);
-    // }
+    public void deleteTask(Long id) {
+        taskRepository.deleteById(id);
+    }
 
     // public void toggleTask(Long id) {
     // Task task = taskRepository.findById(id)

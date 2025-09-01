@@ -1,83 +1,38 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import TaskItem from "@/components/TaskItem";
-import { Task } from "../app/types";
-import { getTasks, createTask } from "@/services/taskService";
-import {
-  closestCorners,
-  DndContext,
-  DragEndEvent,
-  KeyboardSensor,
-  PointerSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { useState } from 'react'
+import TaskItem from '@/components/TaskItem'
+import { closestCorners, DndContext, DragEndEvent } from '@dnd-kit/core'
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { useDragSensors } from '@/utils/dragDropUtil'
+import { useTasks } from '@/utils/useTasksHook'
 
 export default function Tasks() {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [newTask, setNewTask] = useState("");
+  const { tasks, loading, createTask, deleteTask, reorderTasks } = useTasks()
+  const [newTask, setNewTask] = useState('')
+  const sensors = useDragSensors()
 
-  // Fetch tasks on mount
-  useEffect(() => {
-    getTasks()
-      .then(setTasks)
-      .catch((err) => console.error(err))
-      .finally(() => setLoading(false));
-  }, []);
+  // Handle form submission
+  const handleCreateTaskSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const task = await createTask(newTask)
+    if (task) setNewTask('')
+  }
 
-  // Handle creating new task
-  const handleCreateTask = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newTask.trim()) return;
-
-    try {
-      const task = await createTask(newTask);
-      setTasks((prev) => [...prev, task]);
-      setNewTask("");
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const getTaskPos = (id: number) => tasks.findIndex((task) => task.id === id);
-
+  // Handle drag end
   const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+    reorderTasks(active.id, over.id)
+  }
 
-    if (!over || active.id === over.id) return;
-
-    setTasks((tasks) => {
-      const oldIndex = getTaskPos(Number(active.id));
-      const newIndex = getTaskPos(Number(over.id));
-      if (oldIndex === -1 || newIndex === -1) return tasks;
-      return arrayMove(tasks, oldIndex, newIndex);
-    });
-  };
-
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(TouchSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p>Loading...</p>
 
   return (
     <div className="max-w-xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">My Tasks</h1>
 
-      <form onSubmit={handleCreateTask} className="flex gap-2 mb-6">
+      <form onSubmit={handleCreateTaskSubmit} className="flex gap-2 mb-6">
         <input
           type="text"
           value={newTask}
@@ -103,12 +58,12 @@ export default function Tasks() {
             <TaskItem
               key={task.id}
               task={task}
-              onEdit={(t) => console.log("Edit", t)}
-              onDelete={(t) => console.log("Delete", t)}
+              onEdit={(t) => console.log('Edit', t)}
+              onDelete={deleteTask}
             />
           ))}
         </SortableContext>
       </DndContext>
     </div>
-  );
+  )
 }

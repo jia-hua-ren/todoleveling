@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import Tasks from "@/components/Tasks";
-import { verifySession } from "@/services/verifySession";
+import { verifySession } from "@/utils/verifySession";
 
 export default async function DashboardPage() {
   const user = await verifySession();

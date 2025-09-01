@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.app.todoapp.model.Task;
 import com.app.todoapp.service.TaskService;
 
+import java.util.Optional;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -52,11 +54,27 @@ public class TaskController {
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
 
-    // @DeleteMapping("/{id}/delete")
-    // public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
-    // taskService.deleteTask(id);
-    // return ResponseEntity.ok().build();
-    // }
+    @DeleteMapping("/{id}/delete")
+    public ResponseEntity<Void> deleteTask(@PathVariable Long id, Authentication auth) {
+        String ownerId = getOwnerId(auth);
+
+        // Fetch the task
+        Optional<Task> taskOpt = taskService.getTaskById(id);
+
+        if (taskOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Task task = taskOpt.get();
+
+        // Check ownership
+        if (!task.getOwner().getId().equals(ownerId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        taskService.deleteTask(id);
+        return ResponseEntity.noContent().build();
+    }
 
     // @PatchMapping("/{id}/toggle")
     // public ResponseEntity<Void> toggleTask(@PathVariable Long id) {

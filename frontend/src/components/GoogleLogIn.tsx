@@ -1,10 +1,9 @@
-import Link from "next/link";
-import { verifySession } from "@/services/verifySession";
+import { verifySession } from '@/utils/verifySession'
 
 export default async function GoogleLogIn() {
-  const user = await verifySession();
-  const backendBase = process.env.NEXT_PUBLIC_BACKEND_BASE_URL ?? "";
-  const logoutUrl = `${backendBase.replace(/\/+$/, "")}/logout`;
+  const user = await verifySession()
+  const backendBase = process.env.NEXT_PUBLIC_BACKEND_BASE_URL ?? ''
+  const logoutUrl = `${backendBase.replace(/\/+$/, '')}/logout`
 
   if (user) {
     return (
@@ -20,10 +19,10 @@ export default async function GoogleLogIn() {
           </a>
         </li>
       </>
-    );
+    )
   }
 
-  const loginUrl = `${backendBase.replace(/\/+$/, "")}/auth/login`;
+  const loginUrl = `${backendBase.replace(/\/+$/, '')}/auth/login`
 
   return (
     <li>
@@ -31,5 +30,5 @@ export default async function GoogleLogIn() {
         Login
       </a>
     </li>
-  );
+  )
 }
