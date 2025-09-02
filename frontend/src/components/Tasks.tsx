@@ -5,21 +5,20 @@ import TaskItem from '@/components/TaskItem'
 import { closestCorners, DndContext, DragEndEvent } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { useDragSensors } from '@/utils/dragDropUtil'
-import { useTasks } from '@/utils/useTasksHook'
+import { useTasks } from '@/hooks/useTasks'
 
 export default function Tasks() {
-  const { tasks, loading, createTask, deleteTask, reorderTasks } = useTasks()
+  const { tasks, loading, createTask, deleteTask, updateTask, reorderTasks } =
+    useTasks()
   const [newTask, setNewTask] = useState('')
   const sensors = useDragSensors()
 
-  // Handle form submission
   const handleCreateTaskSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const task = await createTask(newTask)
     if (task) setNewTask('')
   }
 
-  // Handle drag end
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
     if (!over || active.id === over.id) return
@@ -58,7 +57,7 @@ export default function Tasks() {
             <TaskItem
               key={task.id}
               task={task}
-              onEdit={(t) => console.log('Edit', t)}
+              onEdit={updateTask}
               onDelete={deleteTask}
             />
           ))}
