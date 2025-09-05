@@ -26,16 +26,14 @@ export async function deleteTask(id: number): Promise<void> {
 }
 
 export async function updateTask(task: Task): Promise<void> {
-  // const res = await fetch(`${API_URL}/${task.id}`, {
-  //   method: 'PATCH',
-  //   headers: {
-  //     'Content-Type': 'application/json',
-  //   },
-  //   body: JSON.stringify({ title: task.title }),
-  //   credentials: 'include',
-  // })
-  console.log('updateTask called with', task)
+  const res = await fetch(`${API_URL}/${task.id}/update`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ title: task.title }),
+    credentials: 'include',
+  })
 
-  // if (!res.ok) throw new Error('Failed to update task')
-  // return res.json()
+  if (!res.ok) throw new Error('Failed to update task')
 }

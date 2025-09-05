@@ -45,6 +45,13 @@ public class TaskService {
         taskRepository.deleteById(id);
     }
 
+    public void updateTask(Long id, String newTitle) {
+        taskRepository.findById(id).ifPresent(task -> {
+            task.setTitle(newTitle);
+            taskRepository.save(task);
+        });
+    }
+
     // public void toggleTask(Long id) {
     // Task task = taskRepository.findById(id)
     // .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Task

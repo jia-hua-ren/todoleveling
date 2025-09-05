@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.app.todoapp.dto.UpdateTaskRequest;
 import com.app.todoapp.model.Task;
 import com.app.todoapp.service.TaskService;
 
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -73,6 +75,34 @@ public class TaskController {
         }
 
         taskService.deleteTask(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/update")
+    public ResponseEntity<Void> updateTask(
+            @PathVariable Long id,
+            @RequestBody UpdateTaskRequest request,
+            Authentication auth) {
+
+        String ownerId = getOwnerId(auth);
+
+        // Fetch the task
+        Optional<Task> taskOpt = taskService.getTaskById(id);
+
+        if (taskOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Task task = taskOpt.get();
+
+        // Check ownership
+        if (!task.getOwner().getId().equals(ownerId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        // Pass the new title from the request
+        taskService.updateTask(id, request.getTitle());
+
         return ResponseEntity.noContent().build();
     }
 

@@ -22,11 +22,12 @@ public class SecurityConfig {
         public SecurityFilterChain securityFilterChain(HttpSecurity http)
                         throws Exception {
                 http
+                                .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))
                                 .cors(Customizer.withDefaults())
                                 .csrf(csrf -> csrf.disable())
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/", "/public/**", "/auth/**", "/oauth2/**",
-                                                                "/login/**")
+                                                                "/login/**", "/h2-console/**")
                                                 .permitAll()
                                                 .anyRequest().authenticated())
                                 .oauth2Login(oauth -> oauth
