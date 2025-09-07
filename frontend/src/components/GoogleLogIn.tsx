@@ -1,12 +1,29 @@
 'use client'
 
 import { UserData } from '@/app/types'
+import { getCsrfToken } from '@/utils/csrf'
 
 type Props = { user: UserData | null }
 
 export default function GoogleLogIn({ user }: Props) {
-  const backendBase = process.env.NEXT_PUBLIC_BACKEND_BASE_URL ?? ''
-  const logoutUrl = `${backendBase.replace(/\/+$/, '')}/logout`
+  const backendBase =
+    process.env.NEXT_PUBLIC_BACKEND_BASE_URL?.replace(/\/+$/, '') ?? ''
+
+  const handleLogout = async () => {
+    try {
+      await fetch(`${backendBase}/logout`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'X-XSRF-TOKEN': (await getCsrfToken()) || '',
+        },
+      })
+      // redirect to frontend home after logout
+      window.location.href = '/'
+    } catch (err) {
+      console.error('Logout failed', err)
+    }
+  }
 
   if (user) {
     return (
@@ -17,15 +34,15 @@ export default function GoogleLogIn({ user }: Props) {
           </a>
         </li>
         <li>
-          <a href={logoutUrl} className="navbarItem">
+          <button onClick={handleLogout} className="navbarItem">
             Logout
-          </a>
+          </button>
         </li>
       </>
     )
   }
 
-  const loginUrl = `${backendBase.replace(/\/+$/, '')}/auth/login`
+  const loginUrl = `${backendBase}/auth/login`
 
   return (
     <li>

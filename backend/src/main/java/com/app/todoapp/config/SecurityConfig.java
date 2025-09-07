@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.config.Customizer;
 
 @Configuration
@@ -24,10 +25,12 @@ public class SecurityConfig {
                 http
                                 .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))
                                 .cors(Customizer.withDefaults())
-                                .csrf(csrf -> csrf.disable())
+                                .csrf(csrf -> csrf
+                                                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                                                .ignoringRequestMatchers("/logout", "/h2-console/**"))
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/", "/public/**", "/auth/**", "/oauth2/**",
-                                                                "/login/**", "/h2-console/**")
+                                                                "/login/**", "/h2-console/**", "/logout")
                                                 .permitAll()
                                                 .anyRequest().authenticated())
                                 .oauth2Login(oauth -> oauth
@@ -45,7 +48,11 @@ public class SecurityConfig {
                                                         });
                                 })
                                 .logout(logout -> logout
-                                                .logoutSuccessUrl("http://localhost:3000")
+                                                .logoutUrl("/logout")
+                                                .logoutSuccessHandler((request, response, authentication) -> {
+                                                        response.setStatus(200);
+
+                                                })
                                                 .deleteCookies("JSESSIONID")
                                                 .invalidateHttpSession(true)
                                                 .permitAll());
