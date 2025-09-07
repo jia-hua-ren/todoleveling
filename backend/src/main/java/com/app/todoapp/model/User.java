@@ -33,7 +33,7 @@ public class User {
     private Instant createdAt = Instant.now();
 
     @Builder.Default
-    private int level = 0;
+    private int level = 1;
 
     @Builder.Default
     private int exp = 0;

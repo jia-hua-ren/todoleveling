@@ -1,7 +1,10 @@
-import { verifySession } from '@/utils/verifySession'
+'use client'
 
-export default async function GoogleLogIn() {
-  const user = await verifySession()
+import { UserData } from '@/app/types'
+
+type Props = { user: UserData | null }
+
+export default function GoogleLogIn({ user }: Props) {
   const backendBase = process.env.NEXT_PUBLIC_BACKEND_BASE_URL ?? ''
   const logoutUrl = `${backendBase.replace(/\/+$/, '')}/logout`
 

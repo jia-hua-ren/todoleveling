@@ -1,23 +1,19 @@
-import Image from 'next/image'
-import Tasks from '@/components/Tasks'
+// app/dashboard/page.tsx
+import Navbar from '@/components/Navbar'
+import DashboardClient from './DashboardClient'
 import { verifySession } from '@/utils/verifySession'
-import { Navbar } from '@/components/Navbar'
 
 export default async function DashboardPage() {
-  const user = await verifySession()
+  const user = await verifySession() // ✅ server fetch
 
-  if (!user) return <p>Not logged in.</p>
+  if (!user) {
+    return <p className="p-8 text-center">Not logged in</p>
+  }
 
   return (
     <div>
       <Navbar />
-
-      {/* <h1 className="" >Welcome, {user.name} 👋</h1>
-      <Image src={user.picture} alt={user.name} width={64} height={64} />
-      <p>Email: {user.email}</p>
-      <p>Google sub: {user.id}</p> */}
-
-      <Tasks />
+      <DashboardClient user={user} /> {/* pass server-fetched user */}
     </div>
   )
 }

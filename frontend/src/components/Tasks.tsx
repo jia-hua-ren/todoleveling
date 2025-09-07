@@ -14,8 +14,14 @@ import { useDragSensors } from '@/utils/dragDropUtil'
 import { useTasks } from '@/hooks/useTasks'
 import CompleteZone from '@/components/CompleteZone'
 import AddTaskForm from '@/components/AddTaskForm'
+import { completeTask } from '@/utils/userServiceAPI'
+import { UserData } from '@/app/types'
 
-export default function Tasks() {
+type TasksProps = {
+  onExpGain?: (userData: UserData) => void
+}
+
+export default function Tasks({ onExpGain }: TasksProps = {}) {
   const { tasks, loading, createTask, deleteTask, updateTask, reorderTasks } =
     useTasks()
   const sensors = useDragSensors()
@@ -40,7 +46,7 @@ export default function Tasks() {
     }
   }
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
     setIsDragging(false)
     setActiveTask(null)
 
@@ -50,10 +56,25 @@ export default function Tasks() {
 
     // if dropping on the complete area, reward exp
     if (over.id === 'complete-zone') {
-      console.log(
-        `Task ${active.id} completed!`,
-        tasks.find((t) => t.id === Number(active.id))
-      )
+      const taskId = Number(active.id)
+      const completedTask = tasks.find((t) => t.id === taskId)
+
+      if (!completedTask) return
+
+      try {
+        // Call backend to complete task and gain EXP
+        const userData = await completeTask(taskId)
+
+        // Update task list
+        deleteTask(completedTask)
+
+        // Notify parent component about EXP change
+        if (onExpGain) onExpGain(userData)
+
+        // Show success animation or toast here if desired
+      } catch (error) {
+        console.error('Failed to complete task:', error)
+      }
       return
     }
 
