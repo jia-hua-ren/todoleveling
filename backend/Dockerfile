@@ -1,5 +1,5 @@
 # Stage 1: Build with Maven
-FROM maven:3.9.9-eclipse-temurin-21-slim AS build
+FROM maven:3.9.9-eclipse-temurin-21 AS build
 
 WORKDIR /app
 
