@@ -19,7 +19,7 @@ WORKDIR /app
 RUN addgroup --system spring && adduser --system spring --ingroup spring
 
 # Copy the jar
-COPY --from=builder /app/target/*.jar app.jar
+COPY --from=build /app/target/*.jar app.jar
 
 # Change ownership
 RUN chown spring:spring app.jar
