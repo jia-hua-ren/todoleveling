@@ -1,5 +1,6 @@
 package com.app.todoapp.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,6 +19,9 @@ public class SecurityConfig {
         public SecurityConfig(CustomOidcUserService customOidcUserService) {
                 this.customOidcUserService = customOidcUserService;
         }
+
+        @Value("${FRONTEND_URL:http://localhost:3000}")
+        private String frontendUrl;
 
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http)
@@ -39,7 +43,7 @@ public class SecurityConfig {
                                                                                                         // service
                                                 )
                                                 // force redirect to frontend after login
-                                                .defaultSuccessUrl("http://localhost:3000/dashboard", true)
+                                                .defaultSuccessUrl(frontendUrl + "/dashboard", true)
                                                 .failureUrl("/auth/login?error"))
                                 .exceptionHandling(customizer -> {
                                         customizer.authenticationEntryPoint(
