@@ -9,15 +9,12 @@ export const verifySession = async () => {
 
   async function getUser() {
     try {
-      const authResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/user/me`,
-        {
-          method: 'GET',
-          headers: {
-            Cookie: `JSESSIONID=${cookieStore.get('JSESSIONID')?.value}`,
-          },
-        }
-      )
+      const authResponse = await fetch('/api/user/me', {
+        method: 'GET',
+        headers: {
+          Cookie: `JSESSIONID=${cookieStore.get('JSESSIONID')?.value}`,
+        },
+      })
 
       if (!authResponse.ok) {
         // If backend says 401, treat as logged out

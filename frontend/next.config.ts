@@ -17,6 +17,10 @@ const nextConfig: NextConfig = {
         source: '/auth/:path*',
         destination: `${backendUrl}/auth/:path*`,
       },
+      {
+        source: '/logout',
+        destination: `${backendUrl}/logout`,
+      },
     ]
   },
   images: {

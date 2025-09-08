@@ -1,10 +1,7 @@
 export async function getCsrfToken(): Promise<string> {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/csrf`,
-    {
-      credentials: 'include', // include session cookie
-    }
-  )
+  const res = await fetch('/api/csrf', {
+    credentials: 'include', // include session cookie
+  })
 
   if (!res.ok) throw new Error('Failed to fetch CSRF token')
 
