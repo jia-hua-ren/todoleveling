@@ -1,39 +1,32 @@
-import 'server-only'
-
 import type { UserData } from '@/app/types'
 import { cookies } from 'next/headers'
+import 'server-only'
 
-// https://nextjs.org/docs/app/building-your-application/authentication#creating-a-data-access-layer-dal
-export const verifySession = async () => {
-  const cookieStore = await cookies()
+export const verifySession = async (): Promise<UserData | null> => {
+  try {
+    // Read the incoming JSESSIONID from the browser request
+    const cookieStore = await cookies()
+    const jsessionId = cookieStore.get('JSESSIONID')?.value
 
-  async function getUser() {
-    try {
-      const authResponse = await fetch('/api/user/me', {
-        method: 'GET',
+    if (!jsessionId) return null
+
+    // Forward cookie to backend via proxy
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/user/me`,
+      {
         headers: {
-          Cookie: `JSESSIONID=${cookieStore.get('JSESSIONID')?.value}`,
+          cookie: `JSESSIONID=${jsessionId}`,
         },
-      })
-
-      if (!authResponse.ok) {
-        // If backend says 401, treat as logged out
-        return null
+        cache: 'no-store', // ensures fresh data
       }
-      return await authResponse.json()
-    } catch {
-      return null
-    }
+    )
+
+    if (!res.ok) return null
+
+    const userData: UserData = await res.json()
+    return userData
+  } catch (err) {
+    console.error('verifySession failed', err)
+    return null
   }
-
-  if (
-    cookieStore.has('JSESSIONID') &&
-    cookieStore.get('JSESSIONID')?.value != ''
-  ) {
-    const account: UserData = await getUser()
-
-    return account
-  }
-
-  return null
 }

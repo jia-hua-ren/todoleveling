@@ -11,20 +11,20 @@ export default function GoogleLogIn({ user }: Props) {
 
   const handleLogout = async () => {
     try {
-      await fetch(`${backendBase}/logout`, {
+      await fetch('/api/proxy/logout', {
         method: 'POST',
         credentials: 'include',
         headers: {
           'X-XSRF-TOKEN': (await getCsrfToken()) || '',
         },
       })
+
       // redirect to frontend home after logout
       window.location.href = '/'
     } catch (err) {
       console.error('Logout failed', err)
     }
   }
-
   if (user) {
     return (
       <>

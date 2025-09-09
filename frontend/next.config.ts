@@ -7,22 +7,6 @@ if (!backendUrl) {
 }
 
 const nextConfig: NextConfig = {
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: `${backendUrl}/api/:path*`,
-      },
-      {
-        source: '/auth/:path*',
-        destination: `${backendUrl}/auth/:path*`,
-      },
-      {
-        source: '/logout',
-        destination: `${backendUrl}/logout`,
-      },
-    ]
-  },
   images: {
     remotePatterns: [new URL('https://*.googleusercontent.com/**')],
   },

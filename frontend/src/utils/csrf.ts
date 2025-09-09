@@ -1,5 +1,5 @@
 export async function getCsrfToken(): Promise<string> {
-  const res = await fetch('/api/csrf', {
+  const res = await fetch('/api/proxy/csrf', {
     credentials: 'include', // include session cookie
   })
 

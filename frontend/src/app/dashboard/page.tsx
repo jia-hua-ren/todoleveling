@@ -4,7 +4,7 @@ import DashboardClient from './DashboardClient'
 import { verifySession } from '@/utils/verifySession'
 
 export default async function DashboardPage() {
-  const user = await verifySession() // ✅ server fetch
+  const user = await verifySession()
 
   if (!user) {
     return <p className="p-8 text-center">Not logged in</p>
