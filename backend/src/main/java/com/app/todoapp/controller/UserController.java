@@ -46,8 +46,8 @@ public class UserController {
         user.setExp(newExp);
         user.setLevel(currentLevel);
         user = userRepository.save(user);
-
-        return UserDto.from(user);
+        UserDto dto = UserDto.from(user);
+        return dto;
     }
 
 }
