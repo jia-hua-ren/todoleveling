@@ -23,7 +23,7 @@ RUN addgroup --system spring && adduser --system spring --ingroup spring
 
 USER spring:spring
 
-COPY --from=backend-build /app/backend/target/*.jar app.jar
+COPY --from=backend-builder /app/backend/target/*.jar app.jar
 RUN chown spring:spring app.jar
 
 COPY --from=frontend-builder /app/frontend ./frontend
