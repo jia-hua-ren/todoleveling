@@ -25,7 +25,7 @@ RUN apt-get update && apt-get install -y \
     gettext-base \
  && rm -rf /var/lib/apt/lists/*
 
-RUN addgroup --system spring && adduser --system spring --ingroup spring
+# RUN addgroup --system spring && adduser --system spring --ingroup spring
 
 COPY --from=backend-builder /app/backend/target/*.jar app.jar
 RUN chown spring:spring app.jar
@@ -34,7 +34,7 @@ COPY --from=frontend-builder /app/frontend ./frontend
 
 COPY nginx.conf /etc/nginx/nginx.conf.template
 
-USER spring:spring
+# USER spring:spring
 
 CMD sh -c "\
   cd /app/frontend && npm start & \
