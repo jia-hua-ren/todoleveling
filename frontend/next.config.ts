@@ -7,6 +7,32 @@ if (!backendUrl) {
 }
 
 const nextConfig: NextConfig = {
+  async rewrites() {
+    return [
+      // API endpoints
+      {
+        source: '/api/:path*',
+        destination: `${backendUrl}/api/:path*`,
+      },
+
+      // Login
+      {
+        source: '/auth/login',
+        destination: `${backendUrl}/auth/login`,
+      },
+
+      // OAuth callback
+      { source: '/login/:path*', destination: `${backendUrl}/login/:path*` },
+
+      { source: '/oauth2/:path*', destination: `${backendUrl}/oauth2/:path*` },
+
+      // Logout
+      {
+        source: '/logout',
+        destination: `${backendUrl}/logout`,
+      },
+    ]
+  },
   images: {
     remotePatterns: [new URL('https://*.googleusercontent.com/**')],
   },

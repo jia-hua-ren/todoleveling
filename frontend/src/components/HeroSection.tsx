@@ -1,12 +1,12 @@
 export default function HeroSection() {
-  const backendBase = process.env.NEXT_PUBLIC_BACKEND_BASE_URL ?? "";
-  const loginUrl = `${backendBase.replace(/\/+$/, "")}/auth/login`;
+  // const backendBase = process.env.NEXT_PUBLIC_BACKEND_BASE_URL ?? ''
+  const loginUrl = `auth/login`
 
   return (
     <section className="flex max-w-screen my-10 items-center justify-center text-center text-gray-800">
       <div className="max-w-3xl">
         <h2 className="text-4xl md:text-6xl font-extrabold text-gray-900 leading-tight">
-          Turn Your Tasks into{" "}
+          Turn Your Tasks into{' '}
           <span className="text-indigo-600">Adventures</span>
         </h2>
         <p className="mt-6 text-lg md:text-xl text-gray-600">
@@ -23,5 +23,5 @@ export default function HeroSection() {
         </div>
       </div>
     </section>
-  );
+  )
 }

@@ -11,15 +11,12 @@ export const verifySession = async (): Promise<UserData | null> => {
     if (!jsessionId) return null
 
     // Forward cookie to backend via proxy
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/user/me`,
-      {
-        headers: {
-          cookie: `JSESSIONID=${jsessionId}`,
-        },
-        cache: 'no-store', // ensures fresh data
-      }
-    )
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/me`, {
+      headers: {
+        cookie: `JSESSIONID=${jsessionId}`,
+      },
+      cache: 'no-store', // ensures fresh data
+    })
 
     if (!res.ok) return null
 

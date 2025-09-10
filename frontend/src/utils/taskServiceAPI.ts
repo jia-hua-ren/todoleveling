@@ -1,7 +1,7 @@
 import { Task } from '@/app/types'
 import { getCsrfToken } from '@/utils/csrf'
 
-const API_URL = '/api/proxy/tasks'
+const API_URL = '/api/tasks'
 
 export async function getTasks(): Promise<Task[]> {
   const res = await fetch(API_URL, { credentials: 'include' })

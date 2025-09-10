@@ -1,7 +1,7 @@
 import { UserData } from '@/app/types'
 import { getCsrfToken } from '@/utils/csrf'
 
-const API_URL = '/api/proxy/user'
+const API_URL = '/api/user'
 
 export async function completeTask(
   taskId: number,
