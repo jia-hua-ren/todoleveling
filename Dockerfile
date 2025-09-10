@@ -2,7 +2,7 @@
 FROM node:24-alpine AS frontend-builder
 WORKDIR /app/frontend
 COPY frontend/package*.json ./
-RUN npm install
+RUN npm ci
 COPY frontend/ ./
 RUN npm run build
 
@@ -17,18 +17,22 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:21-jdk
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y curl gnupg nginx && \
-    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
-    apt-get install -y nodejs && \
-    rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache nodejs npm nginx bash gettext
 
-COPY --from=backend-builder /app/backend/target/*.jar backend.jar
+RUN addgroup --system spring && adduser --system spring --ingroup spring
+
+USER spring:spring
+
+COPY --from=backend-build /app/backend/target/*.jar app.jar
+RUN chown spring:spring app.jar
 
 COPY --from=frontend-builder /app/frontend ./frontend
 
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY nginx.conf /etc/nginx/nginx.conf.template
 
-EXPOSE 80
-CMD java -jar backend.jar & \
-    cd frontend && npm start & \
-    nginx -g 'daemon off;'
+CMD sh -c "\
+  cd /app/frontend && npm start & \
+  java -jar /app/app.jar --server.port=8080 --spring.profiles.active=${SPRING_PROFILES_ACTIVE} & \
+  envsubst '\$PORT' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && \
+  nginx -g 'daemon off;' \
+"
