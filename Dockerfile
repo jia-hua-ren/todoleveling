@@ -17,7 +17,13 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:21-jdk
 WORKDIR /app
 
-RUN apk add --no-cache nodejs npm nginx bash gettext
+RUN apt-get update && apt-get install -y \
+    nodejs \
+    npm \
+    nginx \
+    bash \
+    gettext-base \
+ && rm -rf /var/lib/apt/lists/*
 
 RUN addgroup --system spring && adduser --system spring --ingroup spring
 
