@@ -1,45 +1,31 @@
 import type { NextConfig } from 'next'
 
-const backendUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL
-
-if (!backendUrl) {
-  throw new Error('Missing BACKEND_URL env variable')
-}
-console.log('Backend URL:', backendUrl)
+const isDev = process.env.NODE_ENV !== 'production'
 
 const nextConfig: NextConfig = {
   async rewrites() {
+    if (!isDev) return [] // no rewrites needed in prod
+
     return [
-      // API endpoints
       {
         source: '/api/:path*',
-        destination: `${backendUrl}/api/:path*`,
+        destination: 'http://localhost:8080/api/:path*',
       },
-
-      // Login
       {
         source: '/auth/login',
-        destination: `${backendUrl}/auth/login`,
+        destination: 'http://localhost:8080/auth/login',
       },
-
-      // OAuth callback
-      { source: '/login/:path*', destination: `${backendUrl}/login/:path*` },
-
-      { source: '/oauth2/:path*', destination: `${backendUrl}/oauth2/:path*` },
-
-      // Logout
+      {
+        source: '/login/:path*',
+        destination: 'http://localhost:8080/login/:path*',
+      },
+      {
+        source: '/oauth2/:path*',
+        destination: 'http://localhost:8080/oauth2/:path*',
+      },
       {
         source: '/logout',
-        destination: `${backendUrl}/logout`,
-      },
-    ]
-  },
-  async redirects() {
-    return [
-      {
-        source: '/logout',
-        destination: `${backendUrl}/logout`,
-        permanent: false,
+        destination: 'http://localhost:8080/logout',
       },
     ]
   },

@@ -10,8 +10,13 @@ export const verifySession = async (): Promise<UserData | null> => {
 
     if (!jsessionId) return null
 
+    const baseUrl =
+      process.env.NODE_ENV === 'production'
+        ? '' // same-origin in Prod
+        : 'http://localhost:8080'
+
     // Forward cookie to backend via proxy
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/me`, {
+    const res = await fetch(`${baseUrl}/api/user/me`, {
       headers: {
         cookie: `JSESSIONID=${jsessionId}`,
       },
