@@ -15,14 +15,20 @@ import org.springframework.session.web.http.DefaultCookieSerializer;
 public class SessionConfig {
 
     @Value("${BASE_URL}")
-    private String frontendUrl;
+    private String backendUrl;
 
-    public String getFrontendHost() {
+    public String getParentDomain(String url) {
         try {
-            URI uri = new URI(frontendUrl);
-            return uri.getHost();
+            URI uri = new URI(url);
+            String host = uri.getHost(); // e.g. "todo-backend.onrender.com"
+            int firstDot = host.indexOf('.');
+            if (firstDot != -1) {
+                return host.substring(firstDot + 1); // "onrender.com"
+            } else {
+                return host; // fallback if no dot found
+            }
         } catch (URISyntaxException e) {
-            throw new RuntimeException("Invalid BASE_URL", e);
+            throw new RuntimeException("Invalid URL: " + url, e);
         }
     }
 
@@ -32,7 +38,7 @@ public class SessionConfig {
 
         serializer.setCookieName("JSESSIONID");
         serializer.setCookiePath("/");
-        serializer.setDomainName(getFrontendHost()); // prod backend domain
+        serializer.setDomainName(getParentDomain(backendUrl)); // prod backend domain
         serializer.setUseSecureCookie(true); // HTTPS required
         serializer.setUseHttpOnlyCookie(true);
         serializer.setSameSite("None"); // cross-site
