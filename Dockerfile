@@ -37,7 +37,7 @@ COPY nginx.conf /etc/nginx/nginx.conf.template
 # USER spring:spring
 
 CMD sh -c "\
-  cd /app/frontend && npm start & \
+  cd /app/frontend && PORT=3000 npm start & \
   java -jar /app/app.jar --server.port=8080 --spring.profiles.active=${SPRING_PROFILES_ACTIVE} & \
   envsubst '\$PORT' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && \
   nginx -g 'daemon off;' \
