@@ -7,6 +7,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+
+import jakarta.servlet.http.HttpServletResponse;
+
 import org.springframework.security.config.Customizer;
 
 @Configuration
@@ -50,16 +53,7 @@ public class SecurityConfig {
                                                         (request, response, authException) -> {
                                                                 response.sendError(401, "Unauthorized");
                                                         });
-                                })
-                                .logout(logout -> logout
-                                                .logoutUrl("/logout")
-                                                .logoutSuccessHandler((request, response, authentication) -> {
-                                                        response.setStatus(200);
-
-                                                })
-                                                .deleteCookies("JSESSIONID")
-                                                .invalidateHttpSession(true)
-                                                .permitAll());
+                                });
 
                 return http.build();
         }

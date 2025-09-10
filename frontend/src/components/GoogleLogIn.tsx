@@ -1,27 +1,18 @@
 'use client'
 
 import { UserData } from '@/app/types'
-import { getCsrfToken } from '@/utils/csrf'
 
 type Props = { user: UserData | null }
 
 export default function GoogleLogIn({ user }: Props) {
-  // const handleLogout = async () => {
-  //   try {
-  //     await fetch('/logout', {
-  //       method: 'POST',
-  //       credentials: 'include',
-  //       headers: {
-  //         'X-XSRF-TOKEN': (await getCsrfToken()) || '',
-  //       },
-  //     })
+  const handleLogout = async () => {
+    await fetch('/logout', {
+      method: 'POST',
+      credentials: 'include',
+    })
 
-  //     // redirect to frontend home after logout
-  //     window.location.href = '/'
-  //   } catch (err) {
-  //     console.error('Logout failed', err)
-  //   }
-  // }
+    window.location.href = '/' // or wherever you want to redirect
+  }
   if (user) {
     return (
       <>
@@ -31,9 +22,9 @@ export default function GoogleLogIn({ user }: Props) {
           </a>
         </li>
         <li>
-          <a href="/logout" className="navbarItem">
+          <button onClick={handleLogout} className="navbarItem">
             Logout
-          </a>
+          </button>
         </li>
       </>
     )
