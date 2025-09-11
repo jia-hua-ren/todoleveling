@@ -13,7 +13,7 @@ COPY backend/pom.xml .
 COPY backend/src ./src
 RUN mvn clean package -DskipTests
 
-# Stage 3: run everything
+# Stage 3: run everything with Supervisor
 FROM eclipse-temurin:21-jdk
 WORKDIR /app
 
@@ -23,22 +23,28 @@ RUN apt-get update && apt-get install -y \
     nginx \
     bash \
     gettext-base \
+    supervisor \
  && rm -rf /var/lib/apt/lists/*
 
-# RUN addgroup --system spring && adduser --system spring --ingroup spring
+# --- Create non-root user & group ---
+RUN groupadd -r spring && useradd -r -g spring springuser
 
+# --- Copy backend jar ---
 COPY --from=backend-builder /app/backend/target/*.jar app.jar
-# RUN chown spring:spring app.jar
 
+# --- Copy frontend build ---
 COPY --from=frontend-builder /app/frontend ./frontend
 
+# --- Copy nginx template ---
 COPY nginx.conf /etc/nginx/nginx.conf.template
 
-# USER spring:spring
+# --- Copy supervisor config ---
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-CMD sh -c "\
-  cd /app/frontend && PORT=3000 npm start & \
-  java -jar /app/app.jar --server.port=8080 --spring.profiles.active=${SPRING_PROFILES_ACTIVE} & \
-  envsubst '\$PORT' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && \
-  nginx -g 'daemon off;' \
-"
+# --- Fix ownership ---
+RUN chown -R springuser:spring /app /var/log /var/run /etc/nginx /var/lib/nginx
+
+# --- Switch to non-root user ---
+USER springuser:spring
+
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
