@@ -33,9 +33,8 @@ COPY --from=backend-builder /app/backend/target/*.jar app.jar
 # copy frontend build
 COPY --from=frontend-builder /app/frontend ./frontend
 
-# copy nginx template to /app/nginx 
-RUN mkdir -p /app/nginx
-COPY nginx.conf /app/nginx/nginx.conf.template
+# copy nginx template
+COPY nginx.conf /etc/nginx/nginx.conf.template
 
 # copy supervisor config
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
