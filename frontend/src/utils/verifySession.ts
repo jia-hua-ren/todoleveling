@@ -12,7 +12,7 @@ export const verifySession = async (): Promise<UserData | null> => {
 
     const baseUrl =
       process.env.NODE_ENV === 'production'
-        ? '' // same-origin in Prod
+        ? process.env.NEXT_PUBLIC_BACKEND_BASE_URL
         : 'http://localhost:8080'
 
     // Forward cookie to backend via proxy
