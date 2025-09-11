@@ -27,23 +27,17 @@ RUN apt-get update && apt-get install -y \
     supervisor \
  && rm -rf /var/lib/apt/lists/*
 
-# create non-root user & group
-RUN groupadd -r spring && useradd -r -g spring springuser
+# copy backend jar
+COPY --from=backend-builder /app/backend/target/*.jar app.jar
 
-# copy backend jar (owned by springuser)
-COPY --from=backend-builder --chown=springuser:spring /app/backend/target/*.jar app.jar
+# copy frontend build
+COPY --from=frontend-builder /app/frontend ./frontend
 
-# copy frontend build (owned by springuser)
-COPY --from=frontend-builder --chown=springuser:spring /app/frontend ./frontend
-
-# copy nginx template to /app/nginx (owned by springuser)
+# copy nginx template to /app/nginx 
 RUN mkdir -p /app/nginx
-COPY --chown=springuser:spring nginx.conf /app/nginx/nginx.conf.template
+COPY nginx.conf /app/nginx/nginx.conf.template
 
-# copy supervisor config (owned by springuser)
-COPY --chown=springuser:spring supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-# switch to non-root user
-USER springuser:spring
+# copy supervisor config
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
