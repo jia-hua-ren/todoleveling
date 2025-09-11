@@ -25,9 +25,4 @@ public class AuthController {
                 .build();
     }
 
-    @PostMapping("/logout")
-    public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        request.logout();
-        response.setStatus(HttpServletResponse.SC_OK);
-    }
 }

@@ -53,7 +53,13 @@ public class SecurityConfig {
                                                         (request, response, authException) -> {
                                                                 response.sendError(401, "Unauthorized");
                                                         });
-                                });
+                                })
+                                .logout(logout -> logout
+                                                .logoutUrl("/logout")
+                                                .logoutSuccessHandler((req, res, auth) -> res
+                                                                .setStatus(HttpServletResponse.SC_OK))
+                                                .permitAll());
+                ;
 
                 return http.build();
         }
