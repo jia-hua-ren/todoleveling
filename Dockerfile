@@ -36,8 +36,9 @@ COPY --from=backend-builder --chown=springuser:spring /app/backend/target/*.jar 
 # copy frontend build (owned by springuser)
 COPY --from=frontend-builder --chown=springuser:spring /app/frontend ./frontend
 
-# copy nginx template (owned by springuser)
-COPY --chown=springuser:spring nginx.conf /etc/nginx/nginx.conf.template
+# copy nginx template to /app/nginx (owned by springuser)
+RUN mkdir -p /app/nginx
+COPY --chown=springuser:spring nginx.conf /app/nginx/nginx.conf.template
 
 # copy supervisor config (owned by springuser)
 COPY --chown=springuser:spring supervisord.conf /etc/supervisor/conf.d/supervisord.conf
