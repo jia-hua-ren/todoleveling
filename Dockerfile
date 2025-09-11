@@ -39,7 +39,7 @@ COPY --from=frontend-builder /app/frontend ./frontend
 COPY nginx.conf /etc/nginx/nginx.conf.template
 
 # --- Copy supervisor config ---
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY supervisor.conf /etc/supervisor/conf.d/supervisord.conf
 
 # --- Fix ownership ---
 RUN chown -R springuser:spring /app /var/log /var/run /etc/nginx /var/lib/nginx
