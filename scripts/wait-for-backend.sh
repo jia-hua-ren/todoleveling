@@ -8,6 +8,11 @@ java -jar /app/app.jar --server.port=8080 --server.address=127.0.0.1 --spring.pr
 cd /app/frontend
 HOST=127.0.0.1 PORT=3000 npm start &
 
+until curl -sf http://127.0.0.1:8080/actuator/health; do
+  echo "Waiting for backend..."
+  sleep 10
+done
+
 echo "Spring Boot is UP. Starting Nginx..."
 
 # Generate nginx.conf from template
