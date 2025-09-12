@@ -32,10 +32,8 @@ COPY --from=frontend-builder /app/frontend ./frontend
 
 COPY nginx.conf /etc/nginx/nginx.conf.template
 
+COPY scripts/wait-for-backend.sh /wait-for-backend.sh
+RUN chmod +x /wait-for-backend.sh
 
-CMD sh -c "\
-  cd /app/frontend && PORT=3000 npm start & \
-  java -jar /app/app.jar --server.port=8080 --spring.profiles.active=${SPRING_PROFILES_ACTIVE} & \
-  envsubst '\$PORT' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && \
-  nginx -g 'daemon off;' \
-"
+# use it as entrypoint
+CMD ["/wait-for-backend.sh"]
