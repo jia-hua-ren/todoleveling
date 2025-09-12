@@ -11,6 +11,7 @@ java -jar /app/app.jar --server.port=8080 --spring.profiles.active=${SPRING_PROF
 # Wait for Spring Boot to be healthy
 echo "Waiting for Spring Boot to be ready..."
 until curl -s http://localhost:8080/actuator/health | grep '"status":"UP"' > /dev/null; do
+    echo "Still waiting for Spring Boot..."
   sleep 2
 done
 

@@ -37,7 +37,8 @@ public class SecurityConfig {
                                                 .ignoringRequestMatchers("/logout", "/h2-console/**"))
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/", "/public/**", "/auth/**", "/oauth2/**",
-                                                                "/login/**", "/h2-console/**", "/logout")
+                                                                "/login/**", "/h2-console/**", "/logout",
+                                                                "/actuator/health", "/actuator/health/**")
                                                 .permitAll()
                                                 .anyRequest().authenticated())
                                 .oauth2Login(oauth -> oauth
