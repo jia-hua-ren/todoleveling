@@ -35,5 +35,6 @@ COPY nginx.conf /etc/nginx/nginx.conf.template
 COPY scripts/wait-for-backend.sh /wait-for-backend.sh
 RUN chmod +x /wait-for-backend.sh
 
+EXPOSE 80
 # use it as entrypoint
 CMD ["/wait-for-backend.sh"]
