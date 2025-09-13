@@ -2,9 +2,7 @@ package com.app.todoapp.service;
 
 import java.util.Optional;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.app.todoapp.model.Task;
 import com.app.todoapp.model.User;
@@ -52,12 +50,6 @@ public class TaskService {
         });
     }
 
-    // public void toggleTask(Long id) {
-    // Task task = taskRepository.findById(id)
-    // .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Task
-    // not found"));
-    // task.setCompleted(!task.isCompleted());
-    // taskRepository.save(task);
-    // }
+    // TODO: implement toggle task completion
 
 }

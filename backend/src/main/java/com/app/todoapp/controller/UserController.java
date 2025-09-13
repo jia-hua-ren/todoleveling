@@ -1,6 +1,5 @@
 package com.app.todoapp.controller;
 
-import com.app.todoapp.dto.ExpUpdateRequest;
 import com.app.todoapp.dto.UserDto;
 import com.app.todoapp.model.User;
 import com.app.todoapp.repository.UserRepository;

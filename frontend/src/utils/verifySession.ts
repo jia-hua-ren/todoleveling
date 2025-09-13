@@ -15,7 +15,8 @@ export const verifySession = async (): Promise<UserData | null> => {
         ? process.env.NEXT_PUBLIC_BACKEND_BASE_URL
         : 'http://localhost:8080'
 
-    // Forward cookie to backend via proxy
+    // Forward cookie to backend
+    // sincei it is server-side code, we need to fetch directly
     const res = await fetch(`${baseUrl}/api/user/me`, {
       headers: {
         cookie: `JSESSIONID=${jsessionId}`,
