@@ -16,7 +16,7 @@ export const verifySession = async (): Promise<UserData | null> => {
         : 'http://localhost:8080'
 
     // Forward cookie to backend
-    // sincei it is server-side code, we need to fetch directly
+    // since it is server-side code, we need to fetch directly
     const res = await fetch(`${baseUrl}/api/user/me`, {
       headers: {
         cookie: `JSESSIONID=${jsessionId}`,

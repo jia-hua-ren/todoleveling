@@ -2,8 +2,8 @@ import { PointerSensor } from '@dnd-kit/core'
 import type { PointerEvent } from 'react'
 
 /**
- * An extended "PointerSensor" that prevent some
- * interactive html element(button, input, textarea, select, option...) from dragging
+ * An extended "PointerSensor" that prevent dragging when user clicks on
+ * interactive html element(button, input, textarea, select, option...)
  */
 export class SmartPointerSensor extends PointerSensor {
   static activators = [
