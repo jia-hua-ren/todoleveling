@@ -1,6 +1,6 @@
 # TodoLeveling
 
-A prototype gamified ToDo list web-app that rewards users with experience points for completing tasks, which can be expanded upon in many ways to help motivate the user to complete their tasks. It can be accessed [here](https://todoleveling.onrender.com/)
+A prototype gamified ToDo list web-app that rewards users with experience points for completing tasks, which can be expanded upon in many ways to help motivate the user to complete their tasks. It can be accessed <a href="https://todoleveling.onrender.com/" target="_blank">here</a>
 
 ## Features
 
@@ -24,6 +24,7 @@ This is a webapp that consists of a separate frontend and backend. Hosted in a s
 #### Backend
 
 - Framework: Spring Boot
+- Project and Build Management: Maven
 - Database: Postgres SQL for production, H2 for development
 - RESTful API endpoints
 
@@ -36,7 +37,7 @@ This is a webapp that consists of a separate frontend and backend. Hosted in a s
 
 ## Versions
 
-Node.js 24+ and npm/yarn
-Java 21
-Maven 3.9.9
-Next.js 15+
+- Node.js 24+ and npm/yarn
+- Java 21
+- Maven 3.9.9
+- Next.js 15+
