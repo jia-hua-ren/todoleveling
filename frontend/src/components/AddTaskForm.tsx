@@ -15,8 +15,10 @@ export default function AddTaskForm({ createTask }: AddTaskFormProps) {
     const trimmed = title.trim()
     if (!trimmed) return
 
+    setTitle('')
+
     const newTask = await createTask(trimmed)
-    if (newTask) setTitle('')
+    if (!newTask) setTitle(trimmed)
   }
 
   return (
