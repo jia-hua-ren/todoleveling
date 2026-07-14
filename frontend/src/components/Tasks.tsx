@@ -18,7 +18,7 @@ import { completeTask } from '@/utils/userServiceAPI'
 import { UserData } from '@/app/types'
 
 type TasksProps = {
-  onExpGain?: (userData: UserData) => void
+  onExpGain?: (expGained: number) => void
 }
 
 export default function Tasks({ onExpGain }: TasksProps = {}) {
@@ -61,19 +61,19 @@ export default function Tasks({ onExpGain }: TasksProps = {}) {
 
       if (!completedTask) return
 
+      onExpGain?.(10)
+
       try {
         // Call backend to complete task and gain EXP
-        const userData = await completeTask(taskId)
+        await completeTask(taskId)
 
-        // Update task list
+        // Update task list. Could change to move task to done list in the future
         deleteTask(completedTask)
-
-        // Notify parent component about EXP change
-        if (onExpGain) onExpGain(userData)
 
         // Show success animation or toast here if desired
       } catch (error) {
         console.error('Failed to complete task:', error)
+        onExpGain?.(-10) // revert exp gain if backend fails
       }
       return
     }

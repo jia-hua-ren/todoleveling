@@ -13,8 +13,37 @@ type Props = {
 export default function DashboardClient({ user: initialUser }: Props) {
   const [user, setUser] = useState<UserData>(initialUser)
 
-  const handleExpGain = (updatedUser: UserData) => {
-    setUser(updatedUser)
+  // handles exp gain or loss. Loss is only in the case of backend failing.
+  const handleExpGain = (expGained: number) => {
+    setUser((prev) => {
+      if (!prev) return prev
+
+      let newExp = prev.exp + expGained
+      let newLevel = prev.level
+
+      // Level up
+      while (newExp >= 100) {
+        newExp -= 100
+        newLevel++
+      }
+
+      // Level down
+      while (newExp < 0 && newLevel > 1) {
+        newExp += 100
+        newLevel--
+      }
+
+      // Clamp at level 1, 0 EXP
+      if (newLevel === 1 && newExp < 0) {
+        newExp = 0
+      }
+
+      return {
+        ...prev,
+        exp: newExp,
+        level: newLevel,
+      }
+    })
   }
 
   return (
