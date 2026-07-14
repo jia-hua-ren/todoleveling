@@ -24,24 +24,43 @@ export function useTasks() {
   const handleCreateTask = async (title: string) => {
     if (!title.trim()) return null
 
+    // Create a temporary task for optimistic UI update
+    const tempTask: Task = {
+      id: Date.now(), // temporary ID
+      title,
+      completed: false,
+    }
+
+    // Show it immediately
+    setTasks((prev) => [...prev, tempTask])
+
     try {
-      const task = await createTask(title)
-      setTasks((prev) => [...prev, task])
-      return task
+      const realTask = await createTask(title)
+      setTasks((prev) =>
+        prev.map((task) => (task.id === tempTask.id ? realTask : task))
+      )
+
+      return realTask
     } catch (err) {
       console.error(err)
+      // Remove temporary task
+      setTasks((prev) => prev.filter((task) => task.id !== tempTask.id))
       return null
     }
   }
 
   // Delete task
   const handleDeleteTask = async (task: Task) => {
+    const previousTasks = tasks
+    setTasks((prevTasks) => prevTasks.filter((t) => t.id !== task.id))
+
     try {
       await deleteTask(task.id)
-      setTasks((prevTasks) => prevTasks.filter((t) => t.id !== task.id))
       return true
     } catch (error) {
       console.error('Failed to delete task:', error)
+      // Revert on failure
+      setTasks(previousTasks)
       return false
     }
   }
@@ -60,6 +79,8 @@ export function useTasks() {
   }
 
   const handleUpdateTask = async (task: Task) => {
+    const previousTasks = tasks
+
     try {
       // Optimistic update
       setTasks((prevTasks) =>
@@ -72,9 +93,7 @@ export function useTasks() {
     } catch (error) {
       console.error('Failed to update task:', error)
       // Revert on failure
-      getTasks()
-        .then(setTasks)
-        .catch((err) => console.error(err))
+      setTasks(previousTasks)
       return false
     }
   }
